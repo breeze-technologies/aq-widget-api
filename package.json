@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "npm run build-ts && node dist/index.js",
-        "build": "npm run build-ts && npm run tslint",
+        "start": "npm run build-ts && cp -R src/public dist && node dist/index.js",
+        "build": "npm run build-ts && cp -R src/public dist && npm run tslint",
         "build-ts": "tsc",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
         "test": "echo \"Error: no test specified\" && exit 1",
