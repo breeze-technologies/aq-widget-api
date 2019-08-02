@@ -9,7 +9,7 @@ class JobRunner {
         maxRetries: 1,
         maxConcurrentCallsPerWorker: 5,
         maxCallsPerWorker: 20,
-        maxCallTime: 30000,
+        maxCallTime: 30 * 60 * 1000,
     };
 
     constructor() {

@@ -6,7 +6,7 @@ export function eeaFetchRunner(fetchConfig: EeaUtdFetcherConfig, callback: (resu
     eeaFetchJob(fetchConfig).then((locationIndex) => callback(locationIndex));
 }
 
-export function addressRetrieverRunner(input: string, callback: () => void) {
-    addressRetrieverJob();
+export async function addressRetrieverRunner(input: string, callback: () => void) {
+    await addressRetrieverJob();
     callback();
 }
