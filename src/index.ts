@@ -81,4 +81,4 @@ function onListening() {
 }
 
 eeaService.triggerImmediateFetch();
-addressRetrieverScheduler.triggerImmediateRetrieval();
+// addressRetrieverScheduler.triggerImmediateRetrieval();
