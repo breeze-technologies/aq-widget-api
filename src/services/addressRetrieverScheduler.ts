@@ -12,7 +12,14 @@ class AddressRetrieverScheduler {
         });
     }
 
-    public retrieveAllIncompleteAddresses() {
+    public triggerImmediateRetrieval() {
+        clearInterval(this.interval);
+        this.interval = setInterval(this.retrieveAllIncompleteAddresses.bind(this), this.intervalMinutes * 60 * 1000);
+
+        setImmediate(this.retrieveAllIncompleteAddresses.bind(this), 100);
+    }
+
+    private retrieveAllIncompleteAddresses() {
         return new Promise((resolve, reject) => {
             jobRunner.run("addressRetrieverRunner", null, (result, error) => {
                 if (error) {

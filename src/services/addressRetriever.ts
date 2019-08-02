@@ -48,11 +48,13 @@ class AddressRetriever {
         }
 
         try {
+            console.log("Retrieving address for:", countryCode, stationId, location.longitude, location.latitude);
             const reverseGeocodedLocation = await reverseGeocode(location.longitude, location.latitude);
             if (!reverseGeocodedLocation) {
                 return;
             }
 
+            console.log("Saving retrieved address for:", countryCode, stationId, location.longitude, location.latitude);
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
             console.warn("Could not retrieve or save address for:", location, e);
@@ -66,7 +68,7 @@ class AddressRetriever {
         let partLocation = null;
         for (const file of stationFiles) {
             const fileContent = fs.readFileSync(file, "utf8");
-            if (file.endsWith("_location")) {
+            if (file.endsWith("_location.json")) {
                 completeLocation = JSON.parse(fileContent) as Location;
             } else {
                 const station = JSON.parse(fileContent) as Station;

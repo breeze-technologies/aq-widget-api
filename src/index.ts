@@ -1,6 +1,7 @@
 import http from "http";
 import app from "./app";
 import { addressRetrieverScheduler } from "./services/addressRetrieverScheduler";
+import { eeaService } from "./services/eeaService";
 
 /**
  * Get port from environment and store in Express.
@@ -79,3 +80,5 @@ function onListening() {
     console.info("Listening on " + bind);
 }
 
+eeaService.triggerImmediateFetch();
+addressRetrieverScheduler.triggerImmediateRetrieval();
