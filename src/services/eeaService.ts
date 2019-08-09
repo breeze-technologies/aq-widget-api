@@ -77,7 +77,7 @@ class EeaService {
                 if (mergedStation[key] === undefined) {
                     mergedStation[key] = value;
                 } else if (mergedStation[key] !== value) {
-                    console.warn("Merging key", key, "but there is a conflict:", mergedStation[key], value);
+                    // console.warn("Merging key", key, "but there is a conflict:", mergedStation[key], value);
                     if (isDict(value) && isDict(mergedStation[key])) {
                         mergedStation[key] = { ...mergedStation[key], ...value };
                     } else if (isArray(value) && isArray(mergedStation[key])) {
