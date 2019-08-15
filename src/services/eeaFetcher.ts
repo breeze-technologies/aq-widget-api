@@ -3,6 +3,7 @@ import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConf
 import moment from "moment";
 import { EeaLocationIndex, EeaStationIndex } from "../models/eeaDataIndex";
 import { dataStorage } from "./storage";
+import { MAX_MEASUREMENT_AGE_HOURS } from "../config";
 
 class EeaFetcher {
     private eeaUtdClient: EeaUtdClient;
@@ -48,8 +49,8 @@ class EeaFetcher {
     }
 
     private filterStations(unfilteredStations: Station[]): Station[] {
-        const earliestAllowedTime = moment().subtract(6, "hours");
-        return unfilteredStations.filter((station) => earliestAllowedTime.isAfter(station.measurements[0].dateEnd));
+        const earliestAllowedTime = moment().subtract(MAX_MEASUREMENT_AGE_HOURS, "hours");
+        return unfilteredStations.filter((station) => earliestAllowedTime.isBefore(station.measurements[0].dateEnd));
     }
 
     private indexLatestStations(unindexedStations: Station[]): EeaStationIndex {
