@@ -5,10 +5,10 @@ import { EeaConstants, Station } from "aq-client-eea";
 import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
 import exitHook from "exit-hook";
 import { calcDistanceFromLatLonInKm } from "../utils/geoalgebra";
+import { isArray, isDict } from "../utils/types";
 import { addressRetrieverScheduler } from "./addressRetrieverScheduler";
 import { jobRunner } from "./jobRunner";
 import { dataStorage } from "./storage";
-import { isDict, isArray } from "../utils/types";
 
 class EeaService {
     private interval: NodeJS.Timeout;

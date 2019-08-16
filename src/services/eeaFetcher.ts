@@ -1,9 +1,9 @@
 import { EeaUtdClient, Station } from "aq-client-eea";
 import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
 import moment from "moment";
+import { MAX_MEASUREMENT_AGE_HOURS } from "../config";
 import { EeaLocationIndex, EeaStationIndex } from "../models/eeaDataIndex";
 import { dataStorage } from "./storage";
-import { MAX_MEASUREMENT_AGE_HOURS } from "../config";
 
 class EeaFetcher {
     private eeaUtdClient: EeaUtdClient;
