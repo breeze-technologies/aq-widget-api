@@ -18,6 +18,8 @@ class DataStorage {
         this.createDirectoryIfNotExists(countryDir);
         this.createDirectoryIfNotExists(stationDir);
 
+        station = this.prepareEeaStationDates(station);
+
         const filePath = `${stationDir}/${station.id}_${indicatorCode}.json`;
         fs.writeFileSync(filePath, JSON.stringify(station));
     }
@@ -76,6 +78,22 @@ class DataStorage {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
+    }
+
+    private prepareEeaStationDates(station: Station) {
+        if (station.measurements) {
+            station = {
+                ...station,
+                measurements: station.measurements.map((m) => {
+                    return {
+                        ...m,
+                        dateStart: m.dateStart.toISOString(true) as any,
+                        dateEnd: m.dateEnd.toISOString(true) as any,
+                    };
+                }),
+            };
+        }
+        return station;
     }
 }
 
