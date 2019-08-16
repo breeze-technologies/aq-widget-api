@@ -19,12 +19,12 @@ class AddressRetriever {
 
         const countryDirs = fs.readdirSync(this.storageDir, { withFileTypes: true });
         for (const countryDir of countryDirs) {
-            if (!countryDir.isDirectory() || countryDir.name === "_index") {
+            if (!countryDir || !countryDir.isDirectory() || countryDir.name === "_index") {
                 continue;
             }
             const stationDirs = fs.readdirSync(`${this.storageDir}/${countryDir.name}`, { withFileTypes: true });
             for (const stationDir of stationDirs) {
-                if (!stationDir.isDirectory()) {
+                if (!stationDir || !stationDir.isDirectory()) {
                     continue;
                 }
                 const fullStationDir = `${this.storageDir}/${countryDir.name}/${stationDir.name}`;
