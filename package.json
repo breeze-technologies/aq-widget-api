@@ -16,7 +16,7 @@
         "url": "git+https://github.com/breeze-technologies/aq-widget-api.git"
     },
     "author": "Breeze Technologies",
-    "license": "UNLICENSED",
+    "license": "eupl-1.2",
     "bugs": {
         "url": "https://github.com/breeze-technologies/aq-widget-api/issues"
     },
