@@ -2,11 +2,11 @@ import { Measurement } from "aq-client-eea";
 import moment from "moment";
 
 const EEA_AQI_THRESHOLDS: { [indicator: string]: number[] } = {
-    o3: [80, 120, 180, 240, 600],
+    "o3": [80, 120, 180, 240, 600],
     "pm2.5": [10, 20, 25, 50, 800],
-    pm10: [20, 35, 50, 100, 1200],
-    no2: [40, 100, 200, 400, 1000],
-    so2: [100, 200, 350, 500, 1250],
+    "pm10": [20, 35, 50, 100, 1200],
+    "no2": [40, 100, 200, 400, 1000],
+    "so2": [100, 200, 350, 500, 1250],
 };
 
 export function calculateAqi(measurements: Measurement[]): Measurement | null {

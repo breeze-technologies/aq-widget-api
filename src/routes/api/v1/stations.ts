@@ -2,9 +2,9 @@ import express from "express";
 const router = express.Router();
 
 import { eeaService } from "../../../services/eeaService";
+import { calculateAqi } from "../../../utils/aqi";
 import { jsonError, jsonSuccess } from "../../../utils/jsonResponse";
 import lookupRouter from "./stations/lookup";
-import { calculateAqi } from "../../../utils/aqi";
 
 router.get("/:countryCode/:stationId", (req, res, next) => {
     const countryCode = req.params.countryCode;
@@ -12,11 +12,12 @@ router.get("/:countryCode/:stationId", (req, res, next) => {
     console.log("get station", countryCode, stationId);
     if (!countryCode || !stationId) {
         res.status(400).json(jsonError("Please provide a countryCode and stationId."));
+        return;
     }
     const station = eeaService.getStation(countryCode, stationId);
 
     if (!station) {
-        res.json(jsonError("Station not found."));
+        res.status(404).json(jsonError("Station not found."));
         return;
     }
 

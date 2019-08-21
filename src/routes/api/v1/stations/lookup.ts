@@ -11,6 +11,7 @@ router.get("/", (req, res, next) => {
 
     if (!longitude || !latitude) {
         res.status(400).json(jsonError("Please provide longitude and latitude query parameters."));
+        return;
     }
 
     const nearestIndexEntry = eeaService.findNearestLocationIndexEntry(longitude, latitude);
