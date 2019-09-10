@@ -98,7 +98,7 @@ class EeaService {
                     countryCode,
                     pollutantCode,
                 };
-                const locationIndex = await this.fetchConcurrentAndPromise(fetchConfig);
+                const locationIndex = await this.fetchConcurrentAndPromisify(fetchConfig);
                 locationIndexAll = { ...locationIndexAll, ...locationIndex };
             }
         }
@@ -112,7 +112,7 @@ class EeaService {
         addressRetrieverScheduler.triggerImmediateRetrieval();
     }
 
-    private fetchConcurrentAndPromise(fetchConfig: EeaUtdFetcherConfig): Promise<EeaLocationIndex> {
+    private fetchConcurrentAndPromisify(fetchConfig: EeaUtdFetcherConfig): Promise<EeaLocationIndex> {
         return new Promise((resolve, reject) => {
             jobRunner.run("eeaFetchRunner", fetchConfig, (result, error) => {
                 if (error) {
