@@ -2,6 +2,7 @@ import { Location, Station } from "aq-client-eea";
 import * as fs from "fs";
 import { STORAGE_DIR } from "../config";
 import { reverseGeocode } from "../utils/geocoder";
+import { logging } from "../utils/logging";
 import { sleep } from "../utils/sleep";
 import { dataStorage } from "./storage";
 
@@ -13,7 +14,7 @@ class AddressRetriever {
 
     public async retrieveIncompleteAddresses() {
         if (!fs.existsSync(this.storageDir)) {
-            console.warn("Storage directory does not exist.");
+            logging.warn("Storage directory does not exist.");
             return;
         }
 
@@ -48,16 +49,22 @@ class AddressRetriever {
         }
 
         try {
-            console.log("Retrieving address for:", countryCode, stationId, location.longitude, location.latitude);
+            logging.debug("Retrieving address for:", countryCode, stationId, location.longitude, location.latitude);
             const reverseGeocodedLocation = await reverseGeocode(location.longitude, location.latitude);
             if (!reverseGeocodedLocation) {
                 return;
             }
 
-            console.log("Saving retrieved address for:", countryCode, stationId, location.longitude, location.latitude);
+            logging.debug(
+                "Saving retrieved address for:",
+                countryCode,
+                stationId,
+                location.longitude,
+                location.latitude,
+            );
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
-            console.warn("Could not retrieve or save address for:", location);
+            logging.warn("Could not retrieve or save address for:", location);
         } finally {
             await sleep(1000);
         }

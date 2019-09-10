@@ -1,11 +1,10 @@
-import { EeaLocationIndex, EeaLocationIndexEntry } from "../models/eeaDataIndex";
-
+import { EeaUtdFetcherConfig } from "aq-client-eea";
 import { EeaConstants, Station } from "aq-client-eea";
-
-import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
 import exitHook from "exit-hook";
 import { EEA_FETCH_INTERVAL } from "../config";
+import { EeaLocationIndex, EeaLocationIndexEntry } from "../models/eeaDataIndex";
 import { calcDistanceFromLatLonInKm } from "../utils/geoalgebra";
+import { logging } from "../utils/logging";
 import { isArray, isDict } from "../utils/types";
 import { addressRetrieverScheduler } from "./addressRetrieverScheduler";
 import { jobRunner } from "./jobRunner";
@@ -78,7 +77,7 @@ class EeaService {
                 if (mergedStation[key] === undefined) {
                     mergedStation[key] = value;
                 } else if (mergedStation[key] !== value) {
-                    // console.warn("Merging key", key, "but there is a conflict:", mergedStation[key], value);
+                    // logging.warn("Merging key", key, "but there is a conflict:", mergedStation[key], value);
                     if (isDict(value) && isDict(mergedStation[key])) {
                         mergedStation[key] = { ...mergedStation[key], ...value };
                     } else if (isArray(value) && isArray(mergedStation[key])) {
@@ -102,7 +101,7 @@ class EeaService {
                 locationIndexAll = { ...locationIndexAll, ...locationIndex };
             }
         }
-        console.log("Saving location index\n");
+        logging.debug("Saving location index\n");
         this.locationIndexEntries = Object.keys(locationIndexAll).map((id) => ({
             ...locationIndexAll[id],
             id,

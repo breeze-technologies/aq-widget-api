@@ -26,12 +26,15 @@
         "aq-client-eea": "0.1.0",
         "exit-hook": "2.2.0",
         "express": "4.17.1",
+        "express-winston": "3.3.0",
         "moment": "2.24.0",
-        "node-geocoder": "3.24.0"
+        "node-geocoder": "3.24.0",
+        "winston": "3.2.1"
     },
     "devDependencies": {
         "@types/chai": "4.2.2",
         "@types/express": "4.17.0",
+        "@types/express-winston": "3.0.4",
         "@types/mocha": "5.2.7",
         "@types/node": "12.6.8",
         "@types/node-geocoder": "3.19.1",

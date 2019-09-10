@@ -3,6 +3,7 @@ import { EeaUtdFetcherConfig } from "aq-client-eea";
 import moment from "moment";
 import { MAX_MEASUREMENT_AGE_HOURS } from "../config";
 import { EeaLocationIndex, EeaStationIndex } from "../models/eeaDataIndex";
+import { logging } from "../utils/logging";
 import { dataStorage } from "./storage";
 
 class EeaFetcher {
@@ -15,19 +16,19 @@ class EeaFetcher {
     public async fetchByConfig(fetchConfig: EeaUtdFetcherConfig): Promise<EeaLocationIndex> {
         const locationIndex: EeaLocationIndex = {};
         try {
-            console.log("Loading " + fetchConfig.countryCode + "_" + fetchConfig.pollutantCode);
+            logging.debug("Loading " + fetchConfig.countryCode + "_" + fetchConfig.pollutantCode);
             const countryIndicatorData = await this.loadEEADataByCountryAndIndicator(
                 fetchConfig.countryCode,
                 fetchConfig.pollutantCode,
             );
 
-            console.log("Filtering " + countryIndicatorData.length + " entries");
+            logging.debug("Filtering " + countryIndicatorData.length + " entries");
             const filteredStations = this.filterStations(countryIndicatorData);
 
-            console.log("Indexing " + filteredStations.length + " entries");
+            logging.debug("Indexing " + filteredStations.length + " entries");
             const indexedLatestStations = this.indexLatestStations(filteredStations);
 
-            console.log("Saving " + Object.keys(indexedLatestStations).length + " indexed entries");
+            logging.debug("Saving " + Object.keys(indexedLatestStations).length + " indexed entries");
             for (const stationId of Object.keys(indexedLatestStations)) {
                 const stationData = indexedLatestStations[stationId];
                 await dataStorage.saveEeaStation(fetchConfig.countryCode, fetchConfig.pollutantCode, stationData);
@@ -38,7 +39,7 @@ class EeaFetcher {
                 };
             }
         } catch (e) {
-            console.warn("Failed to load/process EEA data:", JSON.stringify(fetchConfig), e);
+            logging.warn("Failed to load/process EEA data:", JSON.stringify(fetchConfig), e);
         }
         return locationIndex;
     }

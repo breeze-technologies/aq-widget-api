@@ -1,6 +1,7 @@
 import http from "http";
 import app from "./app";
 import { eeaService } from "./services/eeaService";
+import { logging } from "./utils/logging";
 
 /**
  * Get port from environment and store in Express.
@@ -57,11 +58,11 @@ function onError(error: any) {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case "EACCES":
-            console.error(bind + " requires elevated privileges");
+            logging.error(bind + " requires elevated privileges");
             process.exit(1);
             break;
         case "EADDRINUSE":
-            console.error(bind + " is already in use");
+            logging.error(bind + " is already in use");
             process.exit(1);
             break;
         default:
@@ -76,8 +77,8 @@ function onError(error: any) {
 function onListening() {
     const addr = server.address();
     const bind = typeof addr === "string" ? "pipe " + addr : "port " + (addr ? addr.port : "port undefined");
-    console.info("Listening on " + bind);
+    logging.info("Listening on " + bind);
 
-    console.log("Triggering initial EEA fetch...");
+    logging.info("Triggering initial EEA fetch...");
     eeaService.triggerImmediateFetch();
 }
