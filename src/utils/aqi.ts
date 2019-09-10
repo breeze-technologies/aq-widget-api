@@ -1,5 +1,6 @@
 import { Measurement } from "aq-client-eea";
 import moment from "moment";
+import { MIN_AQI_MEASUREMENT_COUNT } from "../config";
 
 const EEA_AQI_THRESHOLDS: { [indicator: string]: number[] } = {
     "o3": [80, 120, 180, 240, 600],
@@ -14,7 +15,7 @@ export function calculateAqi(measurements: Measurement[]): Measurement | null {
     measurements = measurements.filter((m) => aqiRelevantIndicators.indexOf(m.indicator) !== -1);
     measurements = filterTimeframes(measurements);
 
-    if (measurements.length < 2) {
+    if (measurements.length < MIN_AQI_MEASUREMENT_COUNT) {
         return null;
     }
 
@@ -28,11 +29,8 @@ export function calculateAqi(measurements: Measurement[]): Measurement | null {
     const score = measurements
         .map((m) => {
             const thresholds = EEA_AQI_THRESHOLDS[m.indicator];
-            if (m.indicator === "pm10") {
-                console.log("pm10", thresholds, m);
-            }
             return thresholds.reduce((prevScore, threshold, index) => {
-                if (m.value >= threshold) {
+                if (m.value > threshold) {
                     return index + 1;
                 }
                 return prevScore;
