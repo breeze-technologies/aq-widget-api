@@ -4,6 +4,7 @@ import { EeaConstants, Station } from "aq-client-eea";
 
 import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
 import exitHook from "exit-hook";
+import { EEA_FETCH_INTERVAL } from "../config";
 import { calcDistanceFromLatLonInKm } from "../utils/geoalgebra";
 import { isArray, isDict } from "../utils/types";
 import { addressRetrieverScheduler } from "./addressRetrieverScheduler";
@@ -12,7 +13,7 @@ import { dataStorage } from "./storage";
 
 class EeaService {
     private interval: NodeJS.Timeout;
-    private intervalMinutes = 60;
+    private intervalMinutes = EEA_FETCH_INTERVAL;
 
     private locationIndexEntries: EeaLocationIndexEntry[] = [];
 
