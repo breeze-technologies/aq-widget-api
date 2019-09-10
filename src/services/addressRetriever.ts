@@ -57,7 +57,7 @@ class AddressRetriever {
             console.log("Saving retrieved address for:", countryCode, stationId, location.longitude, location.latitude);
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
-            console.warn("Could not retrieve or save address for:", location, e);
+            console.warn("Could not retrieve or save address for:", location);
         } finally {
             await sleep(1000);
         }
