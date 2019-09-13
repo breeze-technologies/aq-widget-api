@@ -13,7 +13,7 @@ const EEA_AQI_THRESHOLDS: { [indicator: string]: number[] } = {
 export function calculateAqi(measurements: Measurement[]): Measurement | null {
     const aqiRelevantIndicators = Object.keys(EEA_AQI_THRESHOLDS);
     measurements = measurements.filter((m) => aqiRelevantIndicators.indexOf(m.indicator) !== -1);
-    measurements = filterTimeframes(measurements);
+    measurements = filterTimeFrames(measurements);
 
     if (measurements.length < MIN_AQI_MEASUREMENT_COUNT) {
         return null;
@@ -52,7 +52,7 @@ export function calculateAqi(measurements: Measurement[]): Measurement | null {
     };
 }
 
-function filterTimeframes(measurements: Measurement[]): Measurement[] {
+function filterTimeFrames(measurements: Measurement[]): Measurement[] {
     const timeframeIndex: { [timeframe: string]: Measurement[] } = {};
 
     for (const m of measurements) {
