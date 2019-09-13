@@ -6,8 +6,7 @@ import { jsonError, jsonSuccess } from "../../../../utils/jsonResponse";
 const router = express.Router();
 
 router.get("/", (req, res, next) => {
-    const longitude = req.query.longitude;
-    const latitude = req.query.latitude;
+    const { longitude, latitude } = req.query;
 
     if (!longitude || !latitude) {
         res.status(400).json(jsonError("Please provide longitude and latitude query parameters."));
