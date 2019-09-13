@@ -7,15 +7,14 @@ import { jsonError, jsonSuccess } from "../../../utils/jsonResponse";
 import lookupRouter from "./stations/lookup";
 
 router.get("/:countryCode/:stationId", (req, res, next) => {
-    const countryCode = req.params.countryCode;
-    const stationId = req.params.stationId;
+    const { countryCode, stationId } = req.params;
 
     if (!countryCode || !stationId) {
         res.status(400).json(jsonError("Please provide a countryCode and stationId."));
         return;
     }
-    const station = eeaService.getStation(countryCode, stationId);
 
+    const station = eeaService.getStation(countryCode, stationId);
     if (!station) {
         res.status(404).json(jsonError("Station not found."));
         return;
