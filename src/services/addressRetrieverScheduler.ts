@@ -1,4 +1,4 @@
-import exitHook from "exit-hook";
+import { onProcessExit } from "../utils/process";
 import { jobRunner } from "./jobRunner";
 
 class AddressRetrieverScheduler {
@@ -7,7 +7,7 @@ class AddressRetrieverScheduler {
 
     constructor() {
         this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMinutes * 60 * 1000);
-        exitHook(() => {
+        onProcessExit(() => {
             clearInterval(this.interval);
         });
     }

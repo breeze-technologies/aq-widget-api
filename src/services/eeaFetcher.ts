@@ -1,18 +1,11 @@
-import { EeaUtdClient, Station } from "aq-client-eea";
-import { EeaUtdFetcherConfig } from "aq-client-eea";
-import moment from "moment";
-import { MAX_MEASUREMENT_AGE_HOURS } from "../config";
+import { EeaUtdFetcherConfig, fetchLatestData, Station } from "aq-client-eea";
+import { MAX_MEASUREMENT_AGE_HOURS } from "../constants";
 import { EeaLocationIndex, EeaStationIndex } from "../models/eeaDataIndex";
+import { isDateAfter, isDateBefore, now, subtractHoursFromDate } from "../utils/date";
 import { logging } from "../utils/logging";
 import { dataStorage } from "./storage";
 
 class EeaFetcher {
-    private eeaUtdClient: EeaUtdClient;
-
-    constructor() {
-        this.eeaUtdClient = new EeaUtdClient();
-    }
-
     public async fetchByConfig(fetchConfig: EeaUtdFetcherConfig): Promise<EeaLocationIndex> {
         const locationIndex: EeaLocationIndex = {};
         try {
@@ -31,7 +24,7 @@ class EeaFetcher {
             logging.debug("Saving " + Object.keys(indexedLatestStations).length + " indexed entries");
             for (const stationId of Object.keys(indexedLatestStations)) {
                 const stationData = indexedLatestStations[stationId];
-                await dataStorage.saveEeaStation(fetchConfig.countryCode, fetchConfig.pollutantCode, stationData);
+                dataStorage.saveEeaStation(fetchConfig.countryCode, fetchConfig.pollutantCode, stationData);
                 locationIndex[stationId] = {
                     lon: stationData.location.longitude,
                     lat: stationData.location.latitude,
@@ -46,12 +39,14 @@ class EeaFetcher {
 
     private loadEEADataByCountryAndIndicator(countryCode: string, pollutantCode: string): Promise<Station[]> {
         const fetcherConfig = { countryCode, pollutantCode };
-        return this.eeaUtdClient.fetchLatestData(fetcherConfig);
+        return fetchLatestData(fetcherConfig);
     }
 
     private filterStations(unfilteredStations: Station[]): Station[] {
-        const earliestAllowedTime = moment().subtract(MAX_MEASUREMENT_AGE_HOURS, "hours");
-        return unfilteredStations.filter((station) => earliestAllowedTime.isBefore(station.measurements[0].dateEnd));
+        const earliestAllowedTime = subtractHoursFromDate(now(), MAX_MEASUREMENT_AGE_HOURS);
+        return unfilteredStations.filter((station) =>
+            isDateBefore(earliestAllowedTime, station.measurements[0].dateEnd),
+        );
     }
 
     private indexLatestStations(unindexedStations: Station[]): EeaStationIndex {
@@ -59,9 +54,9 @@ class EeaFetcher {
         for (const station of unindexedStations) {
             const stationId = station.id;
             if (indexedLatestStation.hasOwnProperty(stationId)) {
-                const date = moment(station.measurements[0].dateEnd);
-                const prevStationDate = moment(indexedLatestStation[stationId].measurements[0].dateEnd);
-                if (date.isAfter(prevStationDate)) {
+                const date = station.measurements[0].dateEnd;
+                const prevStationDate = indexedLatestStation[stationId].measurements[0].dateEnd;
+                if (isDateAfter(date, prevStationDate)) {
                     indexedLatestStation[stationId] = station;
                 }
             } else {

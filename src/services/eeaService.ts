@@ -1,10 +1,9 @@
-import { EeaUtdFetcherConfig } from "aq-client-eea";
-import { EeaConstants, Station } from "aq-client-eea";
-import exitHook from "exit-hook";
-import { EEA_FETCH_INTERVAL } from "../config";
+import { COUNTRY_CODES, EeaUtdFetcherConfig, POLLUTANT_CODES, Station } from "aq-client-eea";
+import { EEA_FETCH_INTERVAL } from "../constants";
 import { EeaLocationIndex, EeaLocationIndexEntry } from "../models/eeaDataIndex";
 import { calcDistanceFromLatLonInKm } from "../utils/geoalgebra";
 import { logging } from "../utils/logging";
+import { onProcessExit } from "../utils/process";
 import { isArray, isDict } from "../utils/types";
 import { addressRetrieverScheduler } from "./addressRetrieverScheduler";
 import { jobRunner } from "./jobRunner";
@@ -18,7 +17,7 @@ class EeaService {
 
     constructor() {
         this.interval = setInterval(this.runFetchJobsAndIndex.bind(this), this.intervalMinutes * 60 * 1000);
-        exitHook(() => {
+        onProcessExit(() => {
             clearInterval(this.interval);
         });
 
@@ -32,7 +31,7 @@ class EeaService {
         clearInterval(this.interval);
         this.interval = setInterval(this.runFetchJobsAndIndex.bind(this), this.intervalMinutes * 60 * 1000);
 
-        setImmediate(this.runFetchJobsAndIndex.bind(this), 100);
+        setTimeout(this.runFetchJobsAndIndex.bind(this), 100);
     }
 
     public findNearestLocationIndexEntry(longitude: number, latitude: number): EeaLocationIndexEntry | null {
@@ -50,16 +49,6 @@ class EeaService {
 
     public getStation(countryCode: string, stationId: string) {
         const stationContents = dataStorage.readEeaStation(countryCode, stationId);
-        if (!stationContents) {
-            return null;
-        }
-
-        const mergedStation = this.mergeStationObjects(stationContents);
-        return mergedStation;
-    }
-
-    public getStationByIndexEntry(indexEntry: EeaLocationIndexEntry) {
-        const stationContents = dataStorage.readEeaStation(indexEntry.cc, indexEntry.id || "undefined");
         if (!stationContents) {
             return null;
         }
@@ -91,8 +80,8 @@ class EeaService {
 
     private async runFetchJobsAndIndex() {
         let locationIndexAll: EeaLocationIndex = {};
-        for (const countryCode of EeaConstants.COUNTRY_CODES) {
-            for (const pollutantCode of EeaConstants.POLLUTANT_CODES) {
+        for (const countryCode of COUNTRY_CODES) {
+            for (const pollutantCode of POLLUTANT_CODES) {
                 const fetchConfig = {
                     countryCode,
                     pollutantCode,

@@ -1,4 +1,4 @@
-import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
+import { EeaUtdFetcherConfig } from "aq-client-eea";
 import { addressRetrieverJob } from "./jobs/addressRetrieverJob";
 import { eeaFetchJob } from "./jobs/eeaFetchJob";
 

@@ -1,7 +1,10 @@
 import { Location, Station } from "aq-client-eea";
-import fs from "fs";
 import { STORAGE_DIR } from "../config";
+import { STORAGE_LOCATION_INDEX_DIR, STORAGE_LOCATION_INDEX_FILE, STORAGE_STATION_LOCATION_FILE } from "../constants";
 import { EeaLocationIndexEntry } from "../models/eeaDataIndex";
+import { convertDateToIsoString } from "../utils/date";
+import { createDirIfNotExists, dirExists, fileExists, listFiles, readFile, writeFile } from "../utils/file";
+import { convertFromJson, convertToJson } from "../utils/json";
 
 class DataStorage {
     private storageDir: string;
@@ -9,37 +12,33 @@ class DataStorage {
     constructor(storageDir: string) {
         this.storageDir = storageDir;
 
-        this.createDirectoryIfNotExists(this.storageDir);
+        createDirIfNotExists(this.storageDir);
     }
 
     public saveEeaStation(countryCode: string, indicatorCode: string, station: Station) {
         const countryDir = `${this.storageDir}/${countryCode}`;
         const stationDir = `${countryDir}/${station.id}`;
-        this.createDirectoryIfNotExists(countryDir);
-        this.createDirectoryIfNotExists(stationDir);
+        createDirIfNotExists(countryDir);
+        createDirIfNotExists(stationDir);
 
-        station = this.prepareEeaStationDates(station);
+        const preparedStation = this.prepareEeaStationDates(station);
 
         const filePath = `${stationDir}/${station.id}_${indicatorCode}.json`;
-        fs.writeFileSync(filePath, JSON.stringify(station));
+        writeFile(filePath, convertToJson(preparedStation));
     }
 
     public readEeaStation(countryCode: string, stationId: string): Station[] | null {
         const countryDir = `${this.storageDir}/${countryCode}`;
         const stationDir = `${countryDir}/${stationId}`;
-        if (!fs.existsSync(stationDir)) {
+        if (!dirExists(stationDir)) {
             return null;
         }
-        const files = fs.readdirSync(stationDir, { withFileTypes: true });
         const fileContents = [];
 
-        for (const f of files) {
-            if (!f.isFile()) {
-                continue;
-            }
-            const filePath = `${stationDir}/${f.name}`;
-            let content = JSON.parse(fs.readFileSync(filePath, "utf8"));
-            if (f.name.endsWith("_location.json")) {
+        for (const f of listFiles(stationDir)) {
+            const filePath = `${stationDir}/${f}`;
+            let content = convertFromJson(readFile(filePath));
+            if (f.endsWith(STORAGE_STATION_LOCATION_FILE)) {
                 content = { location: content };
             }
             fileContents.push(content);
@@ -48,47 +47,41 @@ class DataStorage {
     }
 
     public saveEeaLocationIndex(index: EeaLocationIndexEntry[]) {
-        const indexDir = `${this.storageDir}/_index`;
-        this.createDirectoryIfNotExists(indexDir);
+        const indexDir = `${this.storageDir}/${STORAGE_LOCATION_INDEX_DIR}`;
+        createDirIfNotExists(indexDir);
 
-        const filePath = `${indexDir}/eeaLocationIndex.json`;
-        fs.writeFileSync(filePath, JSON.stringify(index));
+        const filePath = `${indexDir}/${STORAGE_LOCATION_INDEX_FILE}`;
+        writeFile(filePath, convertToJson(index));
     }
 
     public readEeaLocationIndex(): EeaLocationIndexEntry[] | null {
-        const indexDir = `${this.storageDir}/_index`;
-        const filePath = `${indexDir}/eeaLocationIndex.json`;
-        if (!fs.existsSync(filePath)) {
+        const indexDir = `${this.storageDir}/${STORAGE_LOCATION_INDEX_DIR}`;
+        const filePath = `${indexDir}/${STORAGE_LOCATION_INDEX_FILE}`;
+        if (!fileExists(filePath)) {
             return null;
         }
-        return JSON.parse(fs.readFileSync(filePath, "utf8"));
+        return convertFromJson(readFile(filePath));
     }
 
     public saveEeaStationLocation(countryCode: string, stationId: string, location: Location) {
         const stationDir = `${this.storageDir}/${countryCode}/${stationId}/`;
-        if (!fs.existsSync(stationDir)) {
+        if (!dirExists(stationDir)) {
             return;
         }
 
-        const filePath = `${stationDir}/_location.json`;
-        fs.writeFileSync(filePath, JSON.stringify(location));
-    }
-
-    private createDirectoryIfNotExists(dir: string) {
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
+        const filePath = `${stationDir}/${STORAGE_STATION_LOCATION_FILE}`;
+        writeFile(filePath, convertToJson(location));
     }
 
     private prepareEeaStationDates(station: Station) {
         if (station.measurements) {
-            station = {
+            return {
                 ...station,
                 measurements: station.measurements.map((m) => {
                     return {
                         ...m,
-                        dateStart: m.dateStart.toISOString(true) as any,
-                        dateEnd: m.dateEnd.toISOString(true) as any,
+                        dateStart: convertDateToIsoString(m.dateStart, true),
+                        dateEnd: convertDateToIsoString(m.dateEnd, true),
                     };
                 }),
             };

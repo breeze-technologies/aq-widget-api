@@ -1,6 +1,6 @@
-import exitHook from "exit-hook";
 import workerFarm, { FarmOptions, Workers } from "worker-farm";
 import { logging } from "../utils/logging";
+import { onProcessExit } from "../utils/process";
 import * as jobRunnerRegistry from "./jobRunnerRegistry";
 
 class JobRunner {
@@ -21,7 +21,7 @@ class JobRunner {
             this.jobRunnerRegistryEntries,
         );
         const thisJobRunner = this;
-        exitHook(() => {
+        onProcessExit(() => {
             logging.info("JOB RUNNER Stopping all workers...");
             thisJobRunner.end();
             logging.info("JOB RUNNER Workers stopped.");

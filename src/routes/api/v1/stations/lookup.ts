@@ -1,8 +1,9 @@
 import express from "express";
-import { MAX_STATION_DISTANCE } from "../../../../config";
+import { MAX_STATION_DISTANCE } from "../../../../constants";
 import { eeaService } from "../../../../services/eeaService";
 import { calcDistanceFromLatLonInKm } from "../../../../utils/geoalgebra";
 import { jsonError, jsonSuccess } from "../../../../utils/jsonResponse";
+
 const router = express.Router();
 
 router.get("/", (req, res, next) => {
