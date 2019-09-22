@@ -23,7 +23,7 @@
     },
     "homepage": "https://github.com/breeze-technologies/aq-widget-api#readme",
     "dependencies": {
-        "aq-client-eea": "0.1.0",
+        "aq-client-eea": "file:../aq-client-eea",
         "exit-hook": "2.2.0",
         "express": "4.17.1",
         "express-winston": "3.3.0",
