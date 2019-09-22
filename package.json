@@ -29,7 +29,8 @@
         "express-winston": "3.3.0",
         "moment": "2.24.0",
         "node-geocoder": "3.24.0",
-        "winston": "3.2.1"
+        "winston": "3.2.1",
+        "worker-farm": "1.7.0"
     },
     "devDependencies": {
         "@types/chai": "4.2.2",
