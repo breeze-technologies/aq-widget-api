@@ -1,3 +1,5 @@
+export const MIN_NODE_VERSION = ">=10.0.0";
+
 export const MAX_STATION_DISTANCE = 5;
 export const MAX_MEASUREMENT_AGE_HOURS = 6;
 export const MIN_AQI_MEASUREMENT_COUNT = 1;

@@ -29,6 +29,7 @@
         "express-winston": "3.3.0",
         "moment": "2.24.0",
         "node-geocoder": "3.24.0",
+        "semver": "6.3.0",
         "winston": "3.2.1",
         "worker-farm": "1.7.0"
     },
@@ -39,6 +40,7 @@
         "@types/mocha": "5.2.7",
         "@types/node": "12.6.8",
         "@types/node-geocoder": "3.19.1",
+        "@types/semver": "6.0.2",
         "chai": "4.2.0",
         "mocha": "6.2.0",
         "prettier": "1.18.2",

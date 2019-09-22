@@ -1,7 +1,14 @@
 import http from "http";
+import semver from "semver";
 import app from "./app";
+import { MIN_NODE_VERSION } from "./constants";
 import { eeaService } from "./services/eeaService";
 import { logging } from "./utils/logging";
+
+if (!semver.satisfies(process.version, MIN_NODE_VERSION)) {
+    logging.error(`NodeJS version ${MIN_NODE_VERSION} required. Current version: ${process.version}`);
+    process.exit(1);
+}
 
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
