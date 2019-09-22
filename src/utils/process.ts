@@ -1,4 +1,5 @@
 import exitHook from "exit-hook";
+import { convertMillisecondsToDurationString } from "./date";
 import { logging } from "./logging";
 
 export function onProcessExit(func: () => void) {
@@ -7,8 +8,7 @@ export function onProcessExit(func: () => void) {
 
 export function logProcessUptime(processName: string) {
     const uptime = process.uptime();
-    const uptimeMinutes = uptime / 60;
-    const uptimeString = uptimeMinutes.toFixed(2);
+    const durationString = convertMillisecondsToDurationString(uptime);
 
-    logging.info(`Process uptime for "${processName}: ${uptimeString} min`);
+    logging.info(`Process uptime for "${processName} (${process.pid})": ${durationString}`);
 }

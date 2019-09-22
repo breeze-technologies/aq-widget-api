@@ -47,3 +47,8 @@ export function timeframeEqualsHours(dateStart: Date, dateEnd: Date, hours: numb
 export function convertDateToIsoString(date: Date, keepOffset: boolean = false) {
     return moment(date).toISOString(keepOffset);
 }
+
+export function convertMillisecondsToDurationString(seconds: number) {
+    const duration = moment.duration(seconds, "seconds");
+    return `${Math.floor(duration.asMinutes())} min ${duration.seconds()} s ${duration.milliseconds().toFixed(3)} ms`;
+}

@@ -3,12 +3,18 @@ import { LOG_DIR } from "../config";
 import { convertToJson } from "./json";
 
 const logFormat = format.printf(({ level, message, timestamp, metadata }) => {
-    const meta = metadata ? convertToJson(metadata) : "";
+    const metadataString =
+        metadata && !Array.isArray(metadata)
+            ? Object.keys(metadata)
+                  .filter((k) => k !== "timestamp")
+                  .map((k) => `${k}=${convertToJson(metadata[k])}`)
+                  .join(", ")
+            : convertToJson(metadata);
     const pid = "pid:" + process.pid;
-    return `${timestamp} [${pid.padEnd(9, " ")}] [${level.padStart(5, " ")}] ${message} ${meta}`;
+    return `${timestamp} [${pid.padEnd(9, " ")}] [${level.padStart(5, " ")}] ${message} ${metadataString}`;
 });
 
-const baseFormat = format.combine(format.timestamp(), format.errors({ stack: true }), logFormat);
+const baseFormat = format.combine(format.timestamp(), format.errors({ stack: true }), logFormat, format.metadata());
 
 export const logging = winston.createLogger({
     level: "debug",

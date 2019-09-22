@@ -34,12 +34,12 @@ class JobRunner {
             logging.error("JOB RUNNER Runner not found!");
             return;
         }
-        logging.info("JOB RUNNER Starting " + runner + " job");
+        logging.info("JOB RUNNER Starting " + runner + " job:", args);
         this.workers[runner](args, (result: any, error: any) => {
             if (error) {
-                logging.error("JOB RUNNER FAILED " + runner + " job");
+                logging.error("JOB RUNNER FAILED " + runner + " job:", args, error);
             } else {
-                logging.info("JOB RUNNER Finished " + runner + " job");
+                logging.info("JOB RUNNER Finished " + runner + " job:", args);
             }
             callback(result, error);
         });
