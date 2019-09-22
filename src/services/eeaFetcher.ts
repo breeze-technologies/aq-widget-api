@@ -32,7 +32,7 @@ class EeaFetcher {
                 };
             }
         } catch (e) {
-            logging.warn("Failed to load/process EEA data:", JSON.stringify(fetchConfig), e);
+            logging.warn("Failed to load/process EEA data: ", fetchConfig, e);
         }
         return locationIndex;
     }
