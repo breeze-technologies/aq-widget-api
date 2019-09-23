@@ -3,5 +3,5 @@ import { addressRetriever } from "../addressRetriever";
 
 export async function addressRetrieverJob() {
     await addressRetriever.retrieveIncompleteAddresses();
-    logProcessUptime("EEA Fetch Job");
+    logProcessUptime("Address Retriever");
 }
