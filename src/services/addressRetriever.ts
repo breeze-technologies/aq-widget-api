@@ -46,13 +46,13 @@ class AddressRetriever {
         }
 
         try {
-            logging.debug("Retrieving address for:", countryCode, stationId, location);
+            logging.debug("Retrieving address for:", { countryCode, stationId, location });
             const reverseGeocodedLocation = await reverseGeocode(location.longitude, location.latitude);
             if (!reverseGeocodedLocation) {
                 return;
             }
 
-            logging.debug("Saving retrieved address for:", countryCode, stationId, location);
+            logging.debug("Saving retrieved address for:", { countryCode, stationId, location });
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
             logging.warn("Could not retrieve or save address for:", location);
