@@ -5,6 +5,7 @@ export const MAX_MEASUREMENT_AGE_HOURS = 6;
 export const MIN_AQI_MEASUREMENT_COUNT = 1;
 
 export const EEA_FETCH_INTERVAL = 60;
+export const ADDRESS_RETRIEVER_INTERVAL = 60;
 export const EEA_AQI_THRESHOLDS: { [indicator: string]: number[] } = {
     "o3": [80, 120, 180, 240, 600],
     "pm2.5": [10, 20, 25, 50, 800],
