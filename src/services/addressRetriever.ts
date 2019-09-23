@@ -16,7 +16,7 @@ class AddressRetriever {
 
     public async retrieveIncompleteAddresses() {
         if (!dirExists(this.storageDir)) {
-            logging.warn("Storage directory does not exist.");
+            logging.warn("Storage directory does not exist.", { storageDir: this.storageDir });
             return;
         }
 
@@ -55,7 +55,7 @@ class AddressRetriever {
             logging.debug("Saving retrieved address for:", { countryCode, stationId, location });
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
-            logging.warn("Could not retrieve or save address for:", location);
+            logging.warn("Could not retrieve or save address for:", { countryCode, stationId, location, e });
         } finally {
             await sleep(ADDRESS_FETCHER_TIMEOUT);
         }
