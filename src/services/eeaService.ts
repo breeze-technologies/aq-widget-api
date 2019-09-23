@@ -1,5 +1,5 @@
 import { COUNTRY_CODES, EeaUtdFetcherConfig, POLLUTANT_CODES, Station } from "aq-client-eea";
-import { EEA_FETCH_INTERVAL } from "../constants";
+import { EEA_AQI_THRESHOLDS, EEA_FETCH_INTERVAL } from "../constants";
 import { EeaLocationIndex, EeaLocationIndexEntry } from "../models/eeaDataIndex";
 import { calcDistanceFromLatLonInKm } from "../utils/geoalgebra";
 import { logging } from "../utils/logging";
@@ -80,8 +80,9 @@ class EeaService {
 
     private async runFetchJobsAndIndex() {
         let locationIndexAll: EeaLocationIndex = {};
+        const pollutantCodes = this.preFilterPollutantCodes(POLLUTANT_CODES);
         for (const countryCode of COUNTRY_CODES) {
-            for (const pollutantCode of POLLUTANT_CODES) {
+            for (const pollutantCode of pollutantCodes) {
                 const fetchConfig = {
                     countryCode,
                     pollutantCode,
@@ -109,6 +110,11 @@ class EeaService {
                 resolve(result);
             });
         });
+    }
+
+    private preFilterPollutantCodes(codes: string[]) {
+        const indicatorKeys = Object.keys(EEA_AQI_THRESHOLDS);
+        return codes.filter((p) => indicatorKeys.find((i) => i === p));
     }
 }
 
