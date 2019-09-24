@@ -1,3 +1,14 @@
 {
-    "cSpell.words": ["datastore", "geoalgebra", "geocoded", "unindexed"]
+    "cSpell.words": [
+        "EUPL",
+        "Geocode",
+        "Promisify",
+        "datastore",
+        "devops",
+        "geoalgebra",
+        "geocoded",
+        "printf",
+        "timeframe",
+        "unindexed"
+    ]
 }
