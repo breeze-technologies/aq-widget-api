@@ -30,6 +30,7 @@ class AddressRetriever {
             for (const stationDir of listDirs(countryDirPath)) {
                 const fullStationDir = `${countryDirPath}/${stationDir}`;
                 await this.retrieveIncompleteAddressForStation(countryDir, stationDir, fullStationDir);
+                await sleep(ADDRESS_FETCHER_TIMEOUT);
             }
         }
     }
@@ -56,8 +57,6 @@ class AddressRetriever {
             dataStorage.saveEeaStationLocation(countryCode, stationId, reverseGeocodedLocation);
         } catch (e) {
             logging.warn("Could not retrieve or save address for:", { countryCode, stationId, location, e });
-        } finally {
-            await sleep(ADDRESS_FETCHER_TIMEOUT);
         }
     }
 

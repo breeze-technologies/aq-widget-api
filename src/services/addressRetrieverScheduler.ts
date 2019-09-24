@@ -4,10 +4,10 @@ import { jobRunner } from "./jobRunner";
 
 class AddressRetrieverScheduler {
     private interval: NodeJS.Timeout;
-    private intervalMinutes = ADDRESS_RETRIEVER_INTERVAL;
+    private intervalMilliseconds = ADDRESS_RETRIEVER_INTERVAL * 60 * 1000;
 
     constructor() {
-        this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMinutes * 60 * 1000);
+        this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMilliseconds);
         onProcessExit(() => {
             clearInterval(this.interval);
         });
@@ -15,7 +15,7 @@ class AddressRetrieverScheduler {
 
     public triggerImmediateRetrieval() {
         clearInterval(this.interval);
-        this.interval = setInterval(this.retrieveAllIncompleteAddresses.bind(this), this.intervalMinutes * 60 * 1000);
+        this.interval = setInterval(this.retrieveAllIncompleteAddresses.bind(this), this.intervalMilliseconds);
 
         setImmediate(this.retrieveAllIncompleteAddresses.bind(this), 100);
     }
