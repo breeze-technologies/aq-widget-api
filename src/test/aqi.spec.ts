@@ -41,8 +41,8 @@ describe("AQI calculation and assessment", () => {
         ...t,
         measurements: t.measurements.map((m) => ({
             unit: "ug/m3",
-            dateStart: moment("2019-09-01 12:00:00"),
-            dateEnd: moment("2019-09-01 13:00:00"),
+            dateStart: moment("2019-09-01 12:00:00").toDate(),
+            dateEnd: moment("2019-09-01 13:00:00").toDate(),
             ...m,
         })),
     }));
@@ -55,8 +55,8 @@ describe("AQI calculation and assessment", () => {
             const expected: Measurement = {
                 value: test.expected,
                 unit: "",
-                dateStart: moment("2019-09-01 12:00:00"),
-                dateEnd: moment("2019-09-01 13:00:00"),
+                dateStart: moment("2019-09-01 12:00:00").toDate(),
+                dateEnd: moment("2019-09-01 13:00:00").toDate(),
                 indicator: "eea_aqi",
             };
 
@@ -68,7 +68,7 @@ describe("AQI calculation and assessment", () => {
     it("measurements of durations unequal to 1 hour should evaluate to null", () => {
         const measurements: Measurement[] = convertedTests[0].measurements.map((m) => ({
             ...m,
-            dateStart: moment("2019-09-01 11:59:00"),
+            dateStart: moment("2019-09-01 11:59:00").toDate(),
         }));
         const aqi = calculateAqi(measurements);
         expect(aqi).to.equal(null);

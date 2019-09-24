@@ -1,12 +1,20 @@
 import winston, { format } from "winston";
 import { LOG_DIR } from "../config";
+import { convertToJson } from "./json";
 
-const baseFormat = format.combine(
-    format.timestamp({
-        format: "YYYY-MM-DD HH:mm:ss",
-    }),
-    format.errors({ stack: true }),
-);
+const logFormat = format.printf(({ level, message, timestamp, metadata }) => {
+    const metadataString =
+        metadata && !Array.isArray(metadata)
+            ? Object.keys(metadata)
+                  .filter((k) => k !== "timestamp")
+                  .map((k) => `${k}=${convertToJson(metadata[k])}`)
+                  .join(", ")
+            : convertToJson(metadata);
+    const pid = "pid:" + process.pid;
+    return `${timestamp} [${pid.padEnd(9, " ")}] [${level.padStart(5, " ")}] ${message} ${metadataString}`;
+});
+
+const baseFormat = format.combine(format.timestamp(), format.errors({ stack: true }), logFormat, format.metadata());
 
 export const logging = winston.createLogger({
     level: "debug",
@@ -20,7 +28,7 @@ export const logging = winston.createLogger({
 if (process.env.NODE_ENV !== "production") {
     logging.add(
         new winston.transports.Console({
-            format: format.combine(baseFormat, format.colorize(), format.simple(), format.align()),
+            format: format.combine(baseFormat, format.colorize({ all: true })),
         }),
     );
 }

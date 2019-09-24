@@ -1,13 +1,14 @@
-import exitHook from "exit-hook";
+import { ADDRESS_RETRIEVER_INTERVAL } from "../constants";
+import { onProcessExit } from "../utils/process";
 import { jobRunner } from "./jobRunner";
 
 class AddressRetrieverScheduler {
     private interval: NodeJS.Timeout;
-    private intervalMinutes = 60;
+    private intervalMinutes = ADDRESS_RETRIEVER_INTERVAL;
 
     constructor() {
         this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMinutes * 60 * 1000);
-        exitHook(() => {
+        onProcessExit(() => {
             clearInterval(this.interval);
         });
     }

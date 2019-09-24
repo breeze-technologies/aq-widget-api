@@ -1,14 +1,6 @@
 import { Measurement } from "aq-client-eea";
-import moment from "moment";
-import { MIN_AQI_MEASUREMENT_COUNT } from "../config";
-
-const EEA_AQI_THRESHOLDS: { [indicator: string]: number[] } = {
-    "o3": [80, 120, 180, 240, 600],
-    "pm2.5": [10, 20, 25, 50, 800],
-    "pm10": [20, 35, 50, 100, 1200],
-    "no2": [40, 100, 200, 400, 1000],
-    "so2": [100, 200, 350, 500, 1250],
-};
+import { EEA_AQI_THRESHOLDS, MIN_AQI_MEASUREMENT_COUNT } from "../constants";
+import { convertDateToIsoString, timeframeEqualsHours } from "./date";
 
 export function calculateAqi(measurements: Measurement[]): Measurement | null {
     const aqiRelevantIndicators = Object.keys(EEA_AQI_THRESHOLDS);
@@ -19,10 +11,9 @@ export function calculateAqi(measurements: Measurement[]): Measurement | null {
         return null;
     }
 
-    const start = moment(measurements[0].dateStart);
-    const end = moment(measurements[0].dateEnd);
-    const oneHourEnd = start.clone().add(1, "hour");
-    if (!end.isSame(oneHourEnd)) {
+    const start = measurements[0].dateStart;
+    const end = measurements[0].dateEnd;
+    if (!timeframeEqualsHours(start, end, 1)) {
         return null;
     }
 
@@ -56,8 +47,8 @@ function filterTimeFrames(measurements: Measurement[]): Measurement[] {
     const timeframeIndex: { [timeframe: string]: Measurement[] } = {};
 
     for (const m of measurements) {
-        const dateStart = moment(m.dateStart).toISOString();
-        const dateEnd = moment(m.dateEnd).toISOString();
+        const dateStart = convertDateToIsoString(m.dateStart);
+        const dateEnd = convertDateToIsoString(m.dateEnd);
         const timeframeKey = dateStart + "_" + dateEnd;
         if (!timeframeIndex[timeframeKey]) {
             timeframeIndex[timeframeKey] = [m];
