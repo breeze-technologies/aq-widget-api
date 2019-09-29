@@ -18,8 +18,9 @@ export async function reverseGeocode(lon: number, lat: number): Promise<Location
     return {
         latitude: lat,
         longitude: lon,
-        city: result.city,
+        city: result.city || result.state || "",
         countryCode: result.countryCode || "",
+        country: result.country || result.countryCode || "",
         streetName: result.streetName,
         streetNumber: result.streetNumber,
     };

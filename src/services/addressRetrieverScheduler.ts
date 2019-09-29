@@ -1,18 +1,26 @@
-import exitHook from "exit-hook";
+import { ADDRESS_RETRIEVER_INTERVAL } from "../constants";
+import { onProcessExit } from "../utils/process";
 import { jobRunner } from "./jobRunner";
 
 class AddressRetrieverScheduler {
     private interval: NodeJS.Timeout;
-    private intervalMinutes = 60;
+    private intervalMilliseconds = ADDRESS_RETRIEVER_INTERVAL * 60 * 1000;
 
     constructor() {
-        this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMinutes * 60 * 1000);
-        exitHook(() => {
+        this.interval = setInterval(this.retrieveAllIncompleteAddresses, this.intervalMilliseconds);
+        onProcessExit(() => {
             clearInterval(this.interval);
         });
     }
 
-    public retrieveAllIncompleteAddresses() {
+    public triggerImmediateRetrieval() {
+        clearInterval(this.interval);
+        this.interval = setInterval(this.retrieveAllIncompleteAddresses.bind(this), this.intervalMilliseconds);
+
+        setImmediate(this.retrieveAllIncompleteAddresses.bind(this), 100);
+    }
+
+    private retrieveAllIncompleteAddresses() {
         return new Promise((resolve, reject) => {
             jobRunner.run("addressRetrieverRunner", null, (result, error) => {
                 if (error) {

@@ -1,12 +1,13 @@
-import { EeaUtdFetcherConfig } from "aq-client-eea/dist/models/eeaUtdFetcherConfig";
+import { EeaUtdFetcherConfig } from "aq-client-eea";
 import { addressRetrieverJob } from "./jobs/addressRetrieverJob";
 import { eeaFetchJob } from "./jobs/eeaFetchJob";
 
-export function eeaFetchRunner(fetchConfig: EeaUtdFetcherConfig, callback: (result: any, error?: any) => void) {
-    eeaFetchJob(fetchConfig).then((locationIndex) => callback(locationIndex));
+export async function eeaFetchRunner(fetchConfig: EeaUtdFetcherConfig, callback: (result: any, error?: any) => void) {
+    const locationIndex = await eeaFetchJob(fetchConfig);
+    callback(locationIndex);
 }
 
-export function addressRetrieverRunner(input: string, callback: () => void) {
-    addressRetrieverJob();
+export async function addressRetrieverRunner(input: string, callback: () => void) {
+    await addressRetrieverJob();
     callback();
 }

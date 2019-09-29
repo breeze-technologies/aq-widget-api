@@ -1,51 +1,46 @@
 import http from "http";
+import semver from "semver";
 import app from "./app";
-import { addressRetrieverScheduler } from "./services/addressRetrieverScheduler";
+import { MIN_NODE_VERSION } from "./constants";
+import { eeaService } from "./services/eeaService";
+import { logging } from "./utils/logging";
 
-/**
- * Get port from environment and store in Express.
- */
+if (!semver.satisfies(process.version, MIN_NODE_VERSION)) {
+    logging.error(`NodeJS version ${MIN_NODE_VERSION} required. Current version: ${process.version}`);
+    process.exit(1);
+}
 
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
 
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
 function normalizePort(val: string) {
     const p = parseInt(val, 10);
 
     if (isNaN(p)) {
-        // named pipe
         return val;
     }
 
     if (p >= 0) {
-        // port number
         return p;
     }
 
     return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
+function onListening() {
+    const addr = server.address();
+    const bind = typeof addr === "string" ? "pipe " + addr : "port " + (addr ? addr.port : "port undefined");
+    logging.info("Listening on " + bind);
+
+    logging.info("Triggering initial EEA fetch...");
+    eeaService.triggerImmediateFetch();
+}
 
 function onError(error: any) {
     if (error.syscall !== "listen") {
@@ -54,28 +49,16 @@ function onError(error: any) {
 
     const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-    // handle specific listen errors with friendly messages
     switch (error.code) {
         case "EACCES":
-            console.error(bind + " requires elevated privileges");
+            logging.error(bind + " requires elevated privileges");
             process.exit(1);
             break;
         case "EADDRINUSE":
-            console.error(bind + " is already in use");
+            logging.error(bind + " is already in use");
             process.exit(1);
             break;
         default:
             throw error;
     }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-    const addr = server.address();
-    const bind = typeof addr === "string" ? "pipe " + addr : "port " + (addr ? addr.port : "port undefined");
-    console.info("Listening on " + bind);
-}
-
